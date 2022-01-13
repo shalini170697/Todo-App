@@ -14,7 +14,6 @@ class App extends Component {
     id: uuidv4(),
     item: "",
     modalInput: "",
-    
     show: false
   };
   handleChange = (e) => {
@@ -34,7 +33,7 @@ class App extends Component {
       this.setState({
         items: updatedItems,
         item: "",
-        id:uuidv4(),
+        id: uuidv4(),
         editItem: false
       });
     }
@@ -50,10 +49,9 @@ class App extends Component {
     const selectedItem = this.state.items.find((item) => item.id === id);
     console.log(selectedItem);
     this.setState({
-      modalInput: selectedItem.title,
-      item: selectedItem,
+      modalInput: selectedItem,
+      item: "",
       id: id,
-     
       show: true
     });
   };
@@ -62,26 +60,28 @@ class App extends Component {
     this.setState({ show: false, item: "" });
 
   };
-
+  saveChanges = element => {
+    this.setState(prev => ({
+      modalInput: "",
+      item: "",
+      id: "",
+      items: [...prev.items.map(ele => (ele.id === element.id ? element : ele))],
+      show: false
+    }))
+  }
   render() {
-    return(<TeamOmegaModalPopup
-      item={this.state.modalInput}
-      
-      onSubmit={this.saveChanges}
-      handleClose={this.handleClose}
-      
-      show={true}
-    /> )
+
     return (
       <div className="container">
         <TeamOmegaHeader />
+         
         <div className="row">
           <div className="col-10 mx-auto col-md-8 mt-5">
-            <form onSubmit={this.handleSubmit}>
+            <form className="d-flex justify-content-center mb-3" onSubmit={this.handleSubmit}>
               <TeamOmegaInputBox
-                handleChange={this.handleChange}
-                handleSubmit={this.handleSubmit}
-                item={this.state.item}
+              handlerChange={this.handleChange} 
+              item={this.state.item}
+              focus={true}
               />
               <TeamOmegaButtons onSubmit={this.handleSubmit} value="Add" />
             </form>
@@ -90,14 +90,15 @@ class App extends Component {
               handleEdit={this.handleEdit}
               handleDelete={this.handleDelete}
             />
-             <TeamOmegaModalPopup
-               item={this.state.modalInput}
-               
-               onSubmit={this.saveChanges}
-               handleClose={this.handleClose}
-               
-               show={this.state.show}
-             /> 
+            {this.state.show ? <TeamOmegaModalPopup
+              item={this.state.modalInput}
+
+              onSubmit={this.saveChanges}
+              handleClose={this.handleClose}
+
+              show={this.state.show}
+            /> : null}
+
           </div>
         </div>
       </div>
